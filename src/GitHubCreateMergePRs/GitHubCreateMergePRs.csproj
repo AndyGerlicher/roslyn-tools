@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net46</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GithubMergeTool\GithubMergeTool.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\Common\auth.csx" CopyToOutputDirectory="PreserveNewest">
+      <Link>auth.csx</Link>
+    </None>
+    <None Include="config.xml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="function.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="project.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="run.csx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ZipFiles Include="..\Common\auth.csx" />
+    <ZipFiles Include="config.xml" />
+    <ZipFiles Include="function.json" />
+    <ZipFiles Include="project.json" />
+    <ZipFiles Include="run.csx" />
+    <ZipFiles Include="$(OutputPath)\GithubMergeTool.dll" />
+  </ItemGroup>
+
+  <Target Name="CreateZipPackage" AfterTargets="Build">
+
+    <PropertyGroup>
+      <ZipPackageDirectory>$(OutputPath)\package</ZipPackageDirectory>
+      <!-- <ZipPackagePath>$(OutputPath)\$(MSBuildThisFileName).zip</ZipPackagePath> -->
+      <ZipPackagePath>$(OutputPath)\test-$(MSBuildThisFileName).zip</ZipPackagePath>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(ZipPackageDirectory)" Condition="Exists('$(ZipPackageDirectory)')" />
+    <MakeDir Directories="$(ZipPackageDirectory)" />
+    <Copy SourceFiles="@(ZipFiles)" DestinationFolder="$(ZipPackageDirectory)" />
+    <Exec Command='powershell -noprofile -executionPolicy RemoteSigned -file "$(MSBuildThisFileDirectory)CreateZipPackage.ps1" -sourceDirectoryName "$(ZipPackageDirectory)" -destinationArchiveFileName "$(ZipPackagePath)"' />
+  </Target>
+
+</Project>

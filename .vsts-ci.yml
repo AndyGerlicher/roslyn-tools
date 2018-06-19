@@ -64,3 +64,13 @@ steps:
     publishLocation: FilePath
     TargetPath: '$(DropRoot)\$(TeamName)\$(Build.DefinitionName)'
   condition: and(succeededOrFailed(), not(contains(variables['PB_PublishType'], 'blob')))
+
+- task: AzureRmWebAppDeployment@4
+  displayName: Publish Azure Functions
+  inputs:
+    connectionType: AzureRM
+    azureSubscription: 'Roslyn Infrastructure Azure Resource Management'
+    appType: functionApp
+    webAppName: roslyn-infra-functions
+    Package: 'artifacts/$(BuildConfiguration)/bin/GitHubCreateMergePRs/net46/test-GitHubCreateMergePRs.zip'
+  #condition: and(succeeded(), eq(variables['$Build.SourceBranch'], 'master')) # TODO: re-add this after testing

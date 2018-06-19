@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "type": "timerTrigger",
+      "name": "every12Hours",
+      "schedule": "0 */12 * * * *",
+      "direction": "in"
+    }
+  ],
+  "disabled": false
+}
